@@ -1,3 +1,11 @@
+﻿using Microsoft.EntityFrameworkCore;
+using SistemaClinica.Infrastructure.Context;
+using SistemaClinica.Domain.Interfaces;
+using SistemaClinica.Infrastructure.Repositories;
+using SistemaClinica.Application.Services;
+using Microsoft.EntityFrameworkCore.InMemory; 
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -12,6 +20,17 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+// 💾 Conexión a la base de datos
+builder.Services.AddDbContext<ClinicaDbContext>(options =>
+    options.UseInMemoryDatabase("ClinicaDb")); 
+
+// 🧩 Inyección de dependencias
+builder.Services.AddScoped<IPacienteRepositorio, PacienteRepositorioEF>();
+builder.Services.AddScoped<PacienteService>();
+
+// MVC
+builder.Services.AddControllersWithViews();
 
 app.UseHttpsRedirection();
 
